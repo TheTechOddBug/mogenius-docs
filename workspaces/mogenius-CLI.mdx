@@ -182,6 +182,20 @@ mocli create job db-migration --image=postgres:15 -n acme-staging -- pg_dump -h 
 mocli create job --from=cronjob/nightly-backup -n acme-staging
 ```
 
+### Applying Resources
+
+Apply a manifest with create-or-update semantics — resources that don't exist yet are created, and resources that already exist are updated in place. Applying the same manifest twice is safe (idempotent):
+
+```bash
+# Apply a manifest (creates or updates resources)
+mocli apply -f deployment.yaml -n acme-staging
+
+# Apply a multi-document manifest
+mocli apply -f manifests.yaml -n acme-staging
+```
+
+Unlike `mocli create`, which fails when a resource already exists, `mocli apply` reconciles the cluster to match your manifest — making it the safer choice for repeatable deployments and CI/CD pipelines.
+
 ### Deleting Resources
 
 ```bash
@@ -282,6 +296,31 @@ mocli cluster connect
 # Version info
 mocli version
 ```
+
+### Shell Autocompletion
+
+`mocli` can complete commands, flags, and even live resource names, namespaces, and kinds directly in your shell.
+
+The quickest way is to let `mocli` detect your shell and set everything up automatically:
+
+```bash
+mocli completion install
+```
+
+This adds a source line to your shell's config file (`~/.zshrc`, `~/.bashrc`) or writes a completion file for fish (`~/.config/fish/completions/`). The command is idempotent — running it twice does nothing. Restart your shell or re-source the config file to activate it.
+
+To set it up manually, generate the completion script for your shell:
+
+```bash
+mocli completion zsh
+mocli completion bash
+mocli completion fish
+mocli completion powershell
+```
+
+<Tip>
+Autocompletion is dynamic: when you tab-complete a resource name, namespace, or kind, `mocli` queries your active context live — so you get the real names from your cluster, not just static command names.
+</Tip>
 
 ## Connecting a Cluster
 
